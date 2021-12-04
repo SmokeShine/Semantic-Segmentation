@@ -1,1 +1,74 @@
-2021-12-04 17:38:39,132 root         INFO     Namespace(gpu=True, train=False, batch_size=32, num_workers=5, num_epochs=10, num_output_classes=10, learning_rate=0.01, sgd_momentum=0.5)
+2021-12-05 01:01:37,217 root         INFO     Namespace(gpu=True, train=True, batch_size=1, num_workers=5, num_epochs=10, num_output_classes=32, learning_rate=0.01, sgd_momentum=0.5)
+2021-12-05 01:01:37,246 root         INFO     Training Segnet
+2021-12-05 01:01:37,246 root         INFO     Generating DataLoader
+2021-12-05 01:01:37,247 root         INFO     Training 1st Model
+2021-12-05 01:01:37,389 root         INFO     Vanilla_SegNet(
+  (encoder_stage_1_conv1): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_1_conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_2_conv1): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_2_conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_3_conv1): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_3_conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_4_conv1): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_4_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_5_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_5_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_1_batch_normalization1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_2_batch_normalization1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_3_batch_normalization1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_4_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_5_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_1_batch_normalization2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_2_batch_normalization2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_3_batch_normalization2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_4_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (encoder_stage_5_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (relu): ReLU()
+  (encoder_max_pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (decoder_unpool): MaxUnpool2d(kernel_size=(2, 2), stride=(2, 2), padding=(0, 0))
+  (decoder_stage_1_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_conv3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv3): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv1): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv3): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_4_conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_4_conv2): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_5_conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_5_conv2): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_4_batch_normalization1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_5_batch_normalization1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_1_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_4_batch_normalization2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_5_batch_normalization2): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_1_batch_normalization3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization3): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+)
+2021-12-05 01:01:39,108 root         INFO     Epoch 0
+2021-12-05 01:01:41,884 root         INFO     Epoch: 0 	 iteration: 0 	 loss:3.730889320373535
+2021-12-05 01:01:42,573 root         INFO     Epoch: 0 	 iteration: 1 	 loss:3.635376214981079
+2021-12-05 01:01:43,231 root         INFO     Epoch: 0 	 iteration: 2 	 loss:3.6405131816864014
+2021-12-05 01:01:43,909 root         INFO     Epoch: 0 	 iteration: 3 	 loss:3.534726619720459
+2021-12-05 01:01:44,563 root         INFO     Epoch: 0 	 iteration: 4 	 loss:3.48732852935791
+2021-12-05 01:01:45,223 root         INFO     Epoch: 0 	 iteration: 5 	 loss:3.451014518737793
+2021-12-05 01:01:45,884 root         INFO     Epoch: 0 	 iteration: 6 	 loss:3.4204297065734863
+2021-12-05 01:01:46,536 root         INFO     Epoch: 0 	 iteration: 7 	 loss:3.3918168544769287
+2021-12-05 01:01:47,187 root         INFO     Epoch: 0 	 iteration: 8 	 loss:3.323380708694458
+2021-12-05 01:01:47,836 root         INFO     Epoch: 0 	 iteration: 9 	 loss:3.295581579208374
+2021-12-05 01:01:48,487 root         INFO     Epoch: 0 	 iteration: 10 	 loss:3.3118836879730225
+2021-12-05 01:01:49,136 root         INFO     Epoch: 0 	 iteration: 11 	 loss:3.2735233306884766
+2021-12-05 01:01:49,843 root         INFO     Epoch: 0 	 iteration: 12 	 loss:3.231750965118408
+2021-12-05 01:01:50,560 root         INFO     Epoch: 0 	 iteration: 13 	 loss:3.496088743209839
+2021-12-05 01:01:51,283 root         INFO     Epoch: 0 	 iteration: 14 	 loss:3.2672603130340576
+2021-12-05 01:01:51,958 root         INFO     Epoch: 0 	 iteration: 15 	 loss:3.144483804702759
+2021-12-05 01:01:52,612 root         INFO     Epoch: 0 	 iteration: 16 	 loss:3.1119325160980225
+2021-12-05 01:01:53,267 root         INFO     Epoch: 0 	 iteration: 17 	 loss:3.1645076274871826

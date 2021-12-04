@@ -45,14 +45,14 @@ class Vanilla_SegNet(nn.Module):
 
         # Green - Pooling
         # Save indices for decoder
-        self.encoder_max_pool = nn.MaxPool2D(2,2,return_indices=True)
+        self.encoder_max_pool = nn.MaxPool2d(2,2,return_indices=True)
 
         # 5 Stages of Decoding - Upsampling with transferred pool indices
         # The feature map is still sparse and need to perform convolution with a trainable filter bank 
         # to densify the output map
 
         # Red - Unsampling via max unpool - one across stages because of no parameters
-        self.decoder_unpool = nn.MaxUnpool2D(2,stride=2)
+        self.decoder_unpool = nn.MaxUnpool2d(2,stride=2)
 
         # Blue - 3 for stage 1-3, 2 for stage 4 and 5
         self.decoder_stage_1_conv1 = nn.Conv2d(512,512,kernel_size=3,padding=1)
@@ -233,10 +233,6 @@ class Vanilla_SegNet(nn.Module):
         decoder_stage_4=self.decoder_stage_4_conv2(decoder_stage_4)
         decoder_stage_4=self.decoder_stage_4_batch_normalization2(decoder_stage_4)
         decoder_stage_4=self.relu(decoder_stage_4)
-        #conv3
-        decoder_stage_4=self.decoder_stage_4_conv3(decoder_stage_4)
-        decoder_stage_4=self.decoder_stage_4_batch_normalization3(decoder_stage_4)
-        decoder_stage_4=self.relu(decoder_stage_4)
 
         # Stage 5
         decoder_stage_5=self.decoder_unpool(decoder_stage_4,encoder_stage_1_indices)
@@ -247,12 +243,9 @@ class Vanilla_SegNet(nn.Module):
         #conv2
         decoder_stage_5=self.decoder_stage_5_conv2(decoder_stage_5)
         decoder_stage_5=self.decoder_stage_5_batch_normalization2(decoder_stage_5)
-        decoder_stage_5=self.relu(decoder_stage_5)
-        #conv3
-        decoder_stage_5=self.decoder_stage_5_conv3(decoder_stage_5)
-        decoder_stage_5=self.decoder_stage_5_batch_normalization3(decoder_stage_5)
-        decoder_stage_5=self.relu(decoder_stage_5)
+        # No Relu
 
+        return decoder_stage_5
         #########################
         #    End of Decoder     #
         #########################
