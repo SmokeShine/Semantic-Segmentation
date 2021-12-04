@@ -1,0 +1,1 @@
+2021-12-04 17:38:39,132 root         INFO     Namespace(gpu=True, train=False, batch_size=32, num_workers=5, num_epochs=10, num_output_classes=10, learning_rate=0.01, sgd_momentum=0.5)
