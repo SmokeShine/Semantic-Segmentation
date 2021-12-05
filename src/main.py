@@ -80,13 +80,17 @@ def new_run(train_model, images_file, labels_file, pixel_classes):
     train_loader = DataLoader(
         dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
     logger.info("Training 1st Model")
-    train_model(train_loader, model_name='Vanilla_SegNet')
+    # List of Model to train
+    train_model(train_loader, model_name='SegNet')
 
 
 def train_model(loader, model_name):
     if model_name == 'Vanilla_SegNet':
         model = mymodels.Vanilla_SegNet(NUM_OUTPUT_CLASSES)
         save_file = 'Vanilla_SegNet.pth'
+    elif model_name == 'SegNet':
+        model = mymodels.SegNet(NUM_OUTPUT_CLASSES)
+        save_file = 'SegNet.pth'
     else:
         sys.exit("Model Not Available")
     logger.info(model)
@@ -100,7 +104,7 @@ def train_model(loader, model_name):
         logger.info(f"Epoch {epoch}")
         train_loss, train_package = train(
             logger, model, device, loader, criterion, optimizer, epoch)
-
+        
     logger.info(f"Training Finished for {model_name}")
 
 
