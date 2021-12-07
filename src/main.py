@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from utils import train, evaluate
+from utils import train, evaluate, plot_loss_curve
 import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
@@ -100,10 +100,15 @@ def train_model(loader, model_name):
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
+    losses = []
     for epoch in range(NUM_EPOCHS):
         logger.info(f"Epoch {epoch}")
-        train_loss, train_package = train(
+        train_loss = train(
             logger, model, device, loader, criterion, optimizer, epoch)
+        losses.append(train_loss)
+
+    # plot loss curve
+    plot_loss_curve(train_loss_history, "Loss Curve", PLOT_OUTPUT_PATH)
         
     logger.info(f"Training Finished for {model_name}")
 
@@ -131,6 +136,8 @@ def parse_args():
                         default=0.01, help="Learning Rate for the optimizer")
     parser.add_argument("--sgd_momentum", nargs='?', type=float,
                         default=0.5, help="Momentum for the SGD Optimizer")
+    parser.add_argument("--plot_output_path", default='./output.jpg', 
+                        help="Output path for Plot")
     
     return parser.parse_args()
 
@@ -150,6 +157,7 @@ if __name__ == '__main__':
     NUM_OUTPUT_CLASSES = args.num_output_classes
     LEARNING_RATE = args.learning_rate
     SGD_MOMENTUM = args.sgd_momentum
+    PLOT_OUTPUT_PATH = args.plot_output_path
     device = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
     images_file = '../data/raw/701_StillsRaw_full'
