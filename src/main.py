@@ -104,7 +104,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
     losses = []
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(1, NUM_EPOCHS + 1):
         logger.info(f"Epoch {epoch}")
         train_loss = train(
             logger, model, device, loader, criterion, optimizer, epoch)
