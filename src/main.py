@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from utils import train, evaluate, plot_loss_curve
+from utils import train, evaluate, plot_loss_curve, save_checkpoint
 import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
@@ -107,6 +107,12 @@ def train_model(loader, model_name):
             logger, model, device, loader, criterion, optimizer, epoch)
         losses.append(train_loss)
 
+        if epoch % EPOCH_SAVE_CHECKPOINT == 0:
+            save_checkpoint(model, optimizer, save_file + "_" + str(epoch) + ".tar")
+
+    # final checkpoint saved
+    save_checkpoint(model, optimizer, save_file + ".tar")
+
     # plot loss curve
     plot_loss_curve(train_loss_history, "Loss Curve", PLOT_OUTPUT_PATH)
         
@@ -138,6 +144,8 @@ def parse_args():
                         default=0.5, help="Momentum for the SGD Optimizer")
     parser.add_argument("--plot_output_path", default='./output.jpg', 
                         help="Output path for Plot")
+    parser.add_argument("--epoch_save_checkpoint", nargs='?', type=int,
+                        default=5, help="Epochs after which to save model checkpoint")
     
     return parser.parse_args()
 
@@ -158,10 +166,11 @@ if __name__ == '__main__':
     LEARNING_RATE = args.learning_rate
     SGD_MOMENTUM = args.sgd_momentum
     PLOT_OUTPUT_PATH = args.plot_output_path
+    EPOCH_SAVE_CHECKPOINT = args.epoch_save_checkpoint
     device = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
-    images_file = '../data/raw/701_StillsRaw_full'
-    labels_file = '../data/raw/LabeledApproved_full'
+    images_file = '../../701_StillsRaw_full'
+    labels_file = '../../LabeledApproved_full'
     pixel_classes = pd.read_csv(
         '../data/raw/classes.txt', header=None, usecols=[0, 1, 2], delim_whitespace=True).values
     if device.type == "cuda":

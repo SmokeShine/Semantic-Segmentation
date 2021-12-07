@@ -49,6 +49,11 @@ def plot_loss_curve(train_loss_history, title, output_path):
     plt.title("title")
     plt.legend(loc="upper right")
     plt.savefig(output_path)
-
     logger.info(f"loss curve saved at {output_path}.")
+
+
+def save_checkpoint(model, optimizer, path):
+    state = {'model': model.state_dict, 'optimizer': optimizer.state_dict}
+    torch.save(state, path)
+    logger.info(f"checkpoint saved at {path}")
         
