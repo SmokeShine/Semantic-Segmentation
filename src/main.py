@@ -14,7 +14,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from utils import train, evaluate, plot_loss_curve, save_checkpoint
+from plots import plot_loss_curve
+from utils import train, evaluate, save_checkpoint
 import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
@@ -72,19 +73,15 @@ class SequenceWithLabelDataset(Dataset):
         
         return (image_raw, one_hot_labels)
 
+def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
 
-def new_run(train_model, images_file, labels_file, pixel_classes):
     logger.info("Generating DataLoader")
     train_dataset = SequenceWithLabelDataset(
         images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes)
     train_loader = DataLoader(
         dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
     logger.info("Training 1st Model")
-    # List of Model to train
-    train_model(train_loader, model_name='SegNet')
 
-
-def train_model(loader, model_name):
     if model_name == 'Vanilla_SegNet':
         model = mymodels.Vanilla_SegNet(NUM_OUTPUT_CLASSES)
         save_file = 'Vanilla_SegNet.pth'
@@ -93,9 +90,15 @@ def train_model(loader, model_name):
         save_file = 'SegNet.pth'
     else:
         sys.exit("Model Not Available")
+
+    if MODEL_PATH != None:
+        checkpoint = torch.load(MODEL_PATH)
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        logger.info(f"Loaded Checkpoint from {MODEL_PATH}")
+
     logger.info(model)
-    optimizer = optim.SGD(model.parameters(),
-                          lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
+    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
 
     model.to(device)
     criterion = nn.CrossEntropyLoss()
@@ -108,13 +111,13 @@ def train_model(loader, model_name):
         losses.append(train_loss)
 
         if epoch % EPOCH_SAVE_CHECKPOINT == 0:
-            save_checkpoint(model, optimizer, save_file + "_" + str(epoch) + ".tar")
+            save_checkpoint(logger, model, optimizer, save_file + "_" + str(epoch) + ".tar")
 
     # final checkpoint saved
-    save_checkpoint(model, optimizer, save_file + ".tar")
+    save_checkpoint(logger, model, optimizer, save_file + ".tar")
 
     # plot loss curve
-    plot_loss_curve(train_loss_history, "Loss Curve", PLOT_OUTPUT_PATH)
+    plot_loss_curve(logger, train_loss_history, "Loss Curve", PLOT_OUTPUT_PATH)
         
     logger.info(f"Training Finished for {model_name}")
 
@@ -144,6 +147,7 @@ def parse_args():
                         default=0.5, help="Momentum for the SGD Optimizer")
     parser.add_argument("--plot_output_path", default='./output.jpg', 
                         help="Output path for Plot")
+    parser.add_argument("--model_path", help="Model Path to resume training")
     parser.add_argument("--epoch_save_checkpoint", nargs='?', type=int,
                         default=5, help="Epochs after which to save model checkpoint")
     
@@ -167,10 +171,12 @@ if __name__ == '__main__':
     SGD_MOMENTUM = args.sgd_momentum
     PLOT_OUTPUT_PATH = args.plot_output_path
     EPOCH_SAVE_CHECKPOINT = args.epoch_save_checkpoint
+    MODEL_PATH = args.model_path
+
     device = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
-    images_file = '../../701_StillsRaw_full'
-    labels_file = '../../LabeledApproved_full'
+    images_file = '../data/raw/701_StillsRaw_full'
+    labels_file = '../data/raw/LabeledApproved_full'
     pixel_classes = pd.read_csv(
         '../data/raw/classes.txt', header=None, usecols=[0, 1, 2], delim_whitespace=True).values
     if device.type == "cuda":
@@ -178,4 +184,4 @@ if __name__ == '__main__':
         torch.backends.cudnn.benchmark = False
     if __train__:
         logger.info("Training Segnet")
-        new_run(train_model, images_file, labels_file, pixel_classes)
+        train_model(images_file, labels_file, pixel_classes)

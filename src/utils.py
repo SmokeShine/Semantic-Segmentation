@@ -40,19 +40,7 @@ def evaluate(logger,model,device,data_loader,criterion,optimizer,epoch,print_fre
             output=model(input)
             loss=criterion(output,target)
 
-
-def plot_loss_curve(train_loss_history, title, output_path):
-    
-    plt.plot(train_loss_history, label= "train")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
-    plt.title("title")
-    plt.legend(loc="upper right")
-    plt.savefig(output_path)
-    logger.info(f"loss curve saved at {output_path}.")
-
-
-def save_checkpoint(model, optimizer, path):
+def save_checkpoint(logger, model, optimizer, path):
     state = {'model': model.state_dict, 'optimizer': optimizer.state_dict}
     torch.save(state, path)
     logger.info(f"checkpoint saved at {path}")
