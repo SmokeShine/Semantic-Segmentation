@@ -78,7 +78,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     logger.info("Generating DataLoader")
     train_dataset = SequenceWithLabelDataset(
         images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes)
-    train_loader = DataLoader(
+    loader = DataLoader(
         dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
     logger.info("Training 1st Model")
 
@@ -177,6 +177,7 @@ if __name__ == '__main__':
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
     images_file = '../data/raw/701_StillsRaw_full'
     labels_file = '../data/raw/LabeledApproved_full'
+    
     pixel_classes = pd.read_csv(
         '../data/raw/classes.txt', header=None, usecols=[0, 1, 2], delim_whitespace=True).values
     if device.type == "cuda":
