@@ -19,6 +19,7 @@ from utils import train, evaluate, save_checkpoint
 import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
+from torch.utils.data import Subset
 
 logging.config.fileConfig("logging.ini")
 logger = logging.getLogger()
@@ -29,8 +30,8 @@ def data_preprocessing():
     pass
 
 
-def load_data():
-    pass
+def split_data(split_type):
+    return 
 
 
 class SequenceWithLabelDataset(Dataset):
@@ -76,10 +77,15 @@ class SequenceWithLabelDataset(Dataset):
 def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
 
     logger.info("Generating DataLoader")
-    train_dataset = SequenceWithLabelDataset(
+    all_images_dataset = SequenceWithLabelDataset(
         images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes)
-    loader = DataLoader(
+    split=int(SPLIT_PERCENTAGE*len(all_images_dataset))
+    valid_dataset=Subset(all_images_dataset,range(split))
+    train_dataset=Subset(all_images_dataset,range(split,len(all_images_dataset)))
+    train_loader = DataLoader(
         dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+    valid_loader = DataLoader(
+        dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
     logger.info("Training 1st Model")
 
     if model_name == 'Vanilla_SegNet':
@@ -91,6 +97,9 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     else:
         sys.exit("Model Not Available")
 
+    # Initialized Optimizer before load_state_dict
+
+    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
     if MODEL_PATH != None:
         checkpoint = torch.load(MODEL_PATH)
         model.load_state_dict(checkpoint['state_dict'])
@@ -98,27 +107,43 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
         logger.info(f"Loaded Checkpoint from {MODEL_PATH}")
 
     logger.info(model)
-    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
-
-    model.to(device)
+    
+    model.to(DEVICE)
     criterion = nn.CrossEntropyLoss()
-    criterion.to(device)
-    losses = []
+    criterion.to(DEVICE)
+    train_loss_history=[]
+    valid_loss_history=[]
+    best_validation_loss=float("inf")
     for epoch in range(1, NUM_EPOCHS + 1):
         logger.info(f"Epoch {epoch}")
         train_loss = train(
-            logger, model, device, loader, criterion, optimizer, epoch)
-        losses.append(train_loss)
-
+            logger, model, DEVICE, train_loader, criterion, optimizer, epoch)
+        train_loss_history.append(train_loss)
+        valid_loss = evaluate(logger, model, DEVICE, valid_loader, criterion,optimizer)
+        valid_loss_history.append(valid_loss)
+        is_best=best_validation_loss>valid_loss
         if epoch % EPOCH_SAVE_CHECKPOINT == 0:
             save_checkpoint(logger, model, optimizer, save_file + "_" + str(epoch) + ".tar")
-
+        # From BD4H Piazza
+        # https://piazza.com/class/ki87klxs9yite?cid=397_f2
+        if is_best:
+            early_stopping_counter=0
+            best_validation_loss=valid_loss
+            torch.save(model,'./best_model.pth',_use_new_zipfile_serialization=False)
+        else:
+            early_stopping_counter+=1
+        if early_stopping_counter >= PATIENCE:
+            break
+    
     # final checkpoint saved
     save_checkpoint(logger, model, optimizer, save_file + ".tar")
-
+    # Loading Best Model
+    best_model=torch.load("./best_model.pth")
+    # Placeholder
+    
     # plot loss curve
-    plot_loss_curve(logger, train_loss_history, "Loss Curve", PLOT_OUTPUT_PATH)
-        
+    plot_loss_curve(logger, train_loss_history, "Train Loss Curve", f"{PLOT_OUTPUT_PATH}train.jpg")
+    plot_loss_curve(logger, valid_loss_history, "Validation Loss Curve", f"{PLOT_OUTPUT_PATH}validation.jpg")    
     logger.info(f"Training Finished for {model_name}")
 
 
@@ -130,7 +155,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Final Group Project - Semantic Segmentation",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--gpu", action='store_true',
-                        default=False, help="Use GPU for training")
+                        default=True, help="Use GPU for training")
     parser.add_argument("--train", action='store_true',
                         default=False, help="Train Model")
     parser.add_argument("--batch_size", nargs='?', type=int,
@@ -145,12 +170,15 @@ def parse_args():
                         default=0.01, help="Learning Rate for the optimizer")
     parser.add_argument("--sgd_momentum", nargs='?', type=float,
                         default=0.5, help="Momentum for the SGD Optimizer")
-    parser.add_argument("--plot_output_path", default='./output.jpg', 
+    parser.add_argument("--plot_output_path", default='./Plots_', 
                         help="Output path for Plot")
     parser.add_argument("--model_path", help="Model Path to resume training")
     parser.add_argument("--epoch_save_checkpoint", nargs='?', type=int,
                         default=5, help="Epochs after which to save model checkpoint")
-    
+    parser.add_argument("--split_percentage", nargs='?', type=float,
+                        default=0.1, help="Train and Validation data split")
+    parser.add_argument("--patience", nargs='?', type=int,
+                        default=3, help="Early stopping epoch count")
     return parser.parse_args()
 
 
@@ -160,7 +188,7 @@ if __name__ == '__main__':
     global BATCH_SIZE, USE_CUDA,\
         NUM_EPOCHS, NUM_WORKERS,\
         LEARNING_RATE, SGD_MOMENTUM,\
-        device
+        DEVICE,SPLIT_PERCENTAGE,PATIENCE
     __train__ = args.train
     BATCH_SIZE = args.batch_size
     USE_CUDA = args.gpu
@@ -172,17 +200,22 @@ if __name__ == '__main__':
     PLOT_OUTPUT_PATH = args.plot_output_path
     EPOCH_SAVE_CHECKPOINT = args.epoch_save_checkpoint
     MODEL_PATH = args.model_path
-
-    device = torch.device(
+    SPLIT_PERCENTAGE=args.split_percentage
+    PATIENCE=args.patience
+    DEVICE = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
     images_file = '../data/raw/701_StillsRaw_full'
     labels_file = '../data/raw/LabeledApproved_full'
     
     pixel_classes = pd.read_csv(
         '../data/raw/classes.txt', header=None, usecols=[0, 1, 2], delim_whitespace=True).values
-    if device.type == "cuda":
+    if DEVICE.type == "cuda":
+        logger.info("Settings for Cuda")
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
     if __train__:
         logger.info("Training Segnet")
         train_model(images_file, labels_file, pixel_classes)
+    else:
+        best_model=torch.load("./best_model.pth")
+        # Predict on New Images
