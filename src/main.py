@@ -107,7 +107,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
         logger.info(f"Loaded Checkpoint from {MODEL_PATH}")
 
     logger.info(model)
-    
+    early_stopping_counter=0
     model.to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     criterion.to(DEVICE)
@@ -122,15 +122,19 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
         valid_loss = evaluate(logger, model, DEVICE, valid_loader, criterion,optimizer)
         valid_loss_history.append(valid_loss)
         is_best=best_validation_loss>valid_loss
+        logger.info(f"Current Epoch loss is better : {is_best} \t Old Loss: {best_validation_loss}  vs New loss:{valid_loss}")
         if epoch % EPOCH_SAVE_CHECKPOINT == 0:
+            logger.info(f"Saving Checkpoint for {model_name} at epoch {epoch}")
             save_checkpoint(logger, model, optimizer, save_file + "_" + str(epoch) + ".tar")
         # From BD4H Piazza
         # https://piazza.com/class/ki87klxs9yite?cid=397_f2
         if is_best:
             early_stopping_counter=0
+            logger.info(f"New Best Identified: \t Old Loss: {best_validation_loss}  vs New loss:\t{valid_loss} ")
             best_validation_loss=valid_loss
             torch.save(model,'./best_model.pth',_use_new_zipfile_serialization=False)
         else:
+            logger.info("Loss didnot improve")
             early_stopping_counter+=1
         if early_stopping_counter >= PATIENCE:
             break
@@ -139,11 +143,12 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     save_checkpoint(logger, model, optimizer, save_file + ".tar")
     # Loading Best Model
     best_model=torch.load("./best_model.pth")
-    # Placeholder
     
     # plot loss curve
-    plot_loss_curve(logger, train_loss_history, "Train Loss Curve", f"{PLOT_OUTPUT_PATH}train.jpg")
-    plot_loss_curve(logger, valid_loss_history, "Validation Loss Curve", f"{PLOT_OUTPUT_PATH}validation.jpg")    
+    logger.info(f"Plotting Charts")
+    logger.info(f"Train Losses:{train_loss_history}")
+    logger.info(f"Validation Losses:{valid_loss_history}")
+    plot_loss_curve(logger,model_name, train_loss_history, valid_loss_history,"Loss Curve", f"{PLOT_OUTPUT_PATH}loss_curves.jpg")
     logger.info(f"Training Finished for {model_name}")
 
 

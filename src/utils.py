@@ -27,7 +27,7 @@ class AverageMeter(object):
 def train(logger,model,device,data_loader,criterion,optimizer,epoch,print_freq=10):
     
     model.train()
-    total_loss = 0.0
+    losses = AverageMeter()
     for i,(input,target) in enumerate(data_loader):
         input=input.to(device)
         target=target.to(device)
@@ -39,12 +39,11 @@ def train(logger,model,device,data_loader,criterion,optimizer,epoch,print_freq=1
         assert not np.isnan(loss.item()),"Model diverged with loss = NaN"
         loss.backward()
         optimizer.step()
-        total_loss += loss.item()
+        losses.update(loss.item(), target.size(0))
         if i%print_freq==0:
-            logger.info(f"Epoch: {epoch} \t iteration: {i} \t loss:{loss.item()/data_loader.batch_size}")    
+            logger.info(f"Epoch: {epoch} \t iteration: {i} \t Training Loss Current:{losses.val:.4f} Average:({losses.avg:.4f})")    
 
-    avg_loss = loss/(i*data_loader.batch_size)
-    return avg_loss
+    return losses.avg
 
 def evaluate(logger,model,device,data_loader,criterion,optimizer,print_freq=10):
     losses = AverageMeter()
