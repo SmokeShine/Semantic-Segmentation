@@ -20,6 +20,8 @@ import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
 from torch.utils.data import Subset
+from torchvision.utils import save_image
+from tqdm import tqdm
 
 logging.config.fileConfig("logging.ini")
 logger = logging.getLogger()
@@ -73,6 +75,35 @@ class SequenceWithLabelDataset(Dataset):
         one_hot_labels = self.convert_tensor(one_hot_labels)
         
         return (image_raw, one_hot_labels)
+
+def predict_model(best_model,images_file, labels_file, pixel_classes):
+    logger.info("Generating DataLoader For Prediction")
+    images_dataset = SequenceWithLabelDataset(
+        images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes)
+    pred_loader = DataLoader(
+        dataset=images_dataset, batch_size=1,shuffle=False,num_workers=0)
+    # No need to calculate grad as it is forward pass only
+    best_model.eval()
+    with torch.no_grad():
+        for counter,(input,target) in tqdm(enumerate(pred_loader)):
+            # Model is in GPU
+            input=input.to(DEVICE)
+            target=target.to(DEVICE)
+            # which pixel belongs to which object, etc. 
+            # assign a class to each pixel of the image. 
+            output=best_model(input)
+            # Output is 32 classes and we need to collapse back to 1
+            # import pdb;pdb.set_trace()
+            expected_width=output.shape[2]
+            expected_height=output.shape[3]
+            temp_image=torch.zeros((3,expected_width,expected_height))
+            squeezed_output=output[0]
+            torch_pixel_classes=torch.from_numpy(pixel_classes)
+            for i in range(expected_width):
+                for j in range(expected_height):
+                    temp_image[:,i,j]=torch_pixel_classes[torch.argmax(squeezed_output[:,i,j])]
+            save_image(temp_image,f'./predictions/pred_{counter}.png')
+            break
 
 def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
 
@@ -224,3 +255,5 @@ if __name__ == '__main__':
     else:
         best_model=torch.load("./best_model.pth")
         # Predict on New Images
+        predict_model(best_model,images_file, labels_file, pixel_classes)
+        logger.info("Prediction Step Complete")

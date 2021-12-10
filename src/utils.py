@@ -35,7 +35,7 @@ def train(logger,model,device,data_loader,criterion,optimizer,epoch,print_freq=1
         output=model(input)
                 
         # RuntimeError: "argmax_cuda" not implemented for 'Bool'
-        loss=criterion(output,torch.argmax(target,axis=1))
+        loss=criterion(output,target)
         assert not np.isnan(loss.item()),"Model diverged with loss = NaN"
         loss.backward()
         optimizer.step()
