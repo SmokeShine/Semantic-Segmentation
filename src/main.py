@@ -15,7 +15,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from plots import plot_loss_curve
-from utils import train, evaluate, save_checkpoint
+from utils import train, evaluate, save_checkpoint, get_color_transforms, get_resize_transforms
+import random
 import mymodels
 import torchvision.transforms as transforms
 from PIL import Image
@@ -26,7 +27,7 @@ from tqdm import tqdm
 logging.config.fileConfig("logging.ini")
 logger = logging.getLogger()
 torch.manual_seed(1)
-
+random.seed(1)
 
 def data_preprocessing():
     pass
@@ -37,13 +38,14 @@ def split_data(split_type):
 
 
 class SequenceWithLabelDataset(Dataset):
-    def __init__(self, images_file, labels_file, num_categories,pixel_classes):
+    def __init__(self, images_file, labels_file, num_categories,pixel_classes,transform=None):
         self.images_file = images_file
         self.labels_file = labels_file
         self.num_categories = num_categories
         self.list_of_images = os.listdir(images_file)
         self.list_of_labels = os.listdir(labels_file)
         self.pixel_classes=pixel_classes
+        self.transform=transform
         self.convert_tensor = transforms.ToTensor()
         if len(self.list_of_images) != len(self.list_of_labels):
             raise ValueError("Count of Segmentation Images do not match with that of labels")
@@ -58,6 +60,8 @@ class SequenceWithLabelDataset(Dataset):
         # https://www.projectpro.io/recipes/convert-image-tensor-pytorch
         # Get image path
         img = Image.open(f"{self.images_file}/{self.list_of_images[index]}")
+        if self.transform:
+            img=self.transform(img)
         image_raw = self.convert_tensor(img)
         # Attach Label
         # remove png and add L
@@ -67,7 +71,6 @@ class SequenceWithLabelDataset(Dataset):
         one_hot_labels = np.zeros((img_lbl.size[1], img_lbl.size[0],self.num_categories))
         img_lbl_np=np.array(img_lbl)
         for i in range(self.num_categories):
-            # import pdb;pdb.set_trace()
             # possible bug area
             label = np.nanmin(self.pixel_classes[i] == img_lbl_np,axis=2)
             one_hot_labels[:, :, i] = label
@@ -108,11 +111,13 @@ def predict_model(best_model,images_file, labels_file, pixel_classes):
 def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
 
     logger.info("Generating DataLoader")
-    all_images_dataset = SequenceWithLabelDataset(
+    train_images_dataset = SequenceWithLabelDataset(
+        images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes, transform= TRANSFORM)
+    valid_images_dataset = SequenceWithLabelDataset(
         images_file, labels_file, num_categories=len(pixel_classes),pixel_classes=pixel_classes)
-    split=int(SPLIT_PERCENTAGE*len(all_images_dataset))
-    valid_dataset=Subset(all_images_dataset,range(split))
-    train_dataset=Subset(all_images_dataset,range(split,len(all_images_dataset)))
+    split=int(SPLIT_PERCENTAGE*len(train_images_dataset))
+    train_dataset=Subset(train_images_dataset,range(split,len(train_images_dataset)))
+    valid_dataset=Subset(valid_images_dataset,range(split))
     train_loader = DataLoader(
         dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
     valid_loader = DataLoader(
@@ -149,6 +154,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
         logger.info(f"Epoch {epoch}")
         train_loss = train(
             logger, model, DEVICE, train_loader, criterion, optimizer, epoch)
+        logger.info(f"Average Loss for epoch {epoch} is {train_loss}")
         train_loss_history.append(train_loss)
         valid_loss = evaluate(logger, model, DEVICE, valid_loader, criterion,optimizer)
         valid_loss_history.append(valid_loss)
@@ -175,7 +181,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     # Loading Best Model
     best_model=torch.load("./best_model.pth")
     
-    # plot loss curve
+    # plot loss curves
     logger.info(f"Plotting Charts")
     logger.info(f"Train Losses:{train_loss_history}")
     logger.info(f"Validation Losses:{valid_loss_history}")
@@ -215,6 +221,10 @@ def parse_args():
                         default=0.1, help="Train and Validation data split")
     parser.add_argument("--patience", nargs='?', type=int,
                         default=3, help="Early stopping epoch count")
+    parser.add_argument("--transforms", default="sharpness,contrast,equalize,crop,hflip" , 
+                        help="Transforms to be applied to input dataset. \
+                        options (posterize,sharpness,contrast,equalize,crop,hflip). \
+                        comma-separated list of transforms.")
     return parser.parse_args()
 
 
@@ -224,7 +234,8 @@ if __name__ == '__main__':
     global BATCH_SIZE, USE_CUDA,\
         NUM_EPOCHS, NUM_WORKERS,\
         LEARNING_RATE, SGD_MOMENTUM,\
-        DEVICE,SPLIT_PERCENTAGE,PATIENCE
+        DEVICE,SPLIT_PERCENTAGE,\
+        TRANSFORM,PATIENCE
     __train__ = args.train
     BATCH_SIZE = args.batch_size
     USE_CUDA = args.gpu
@@ -238,6 +249,7 @@ if __name__ == '__main__':
     MODEL_PATH = args.model_path
     SPLIT_PERCENTAGE=args.split_percentage
     PATIENCE=args.patience
+    TRANSFORM = transforms.Compose(get_color_transforms(logger, str(args.transforms)))
     DEVICE = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
     images_file = '../data/raw/701_StillsRaw_full'
