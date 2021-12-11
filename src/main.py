@@ -138,7 +138,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
     optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
     if MODEL_PATH != None:
         checkpoint = torch.load(MODEL_PATH)
-        model.load_state_dict(checkpoint['state_dict'])
+        model.load_state_dict(checkpoint['model'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         logger.info(f"Loaded Checkpoint from {MODEL_PATH}")
 

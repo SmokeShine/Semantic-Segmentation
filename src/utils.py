@@ -63,7 +63,7 @@ def evaluate(logger,model,device,data_loader,criterion,optimizer,print_freq=10):
     return losses.avg
 
 def save_checkpoint(logger, model, optimizer, path):
-    state = {'model': model.state_dict, 'optimizer': optimizer.state_dict}
+    state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict()}
     torch.save(state, path)
     logger.info(f"checkpoint saved at {path}")
         
