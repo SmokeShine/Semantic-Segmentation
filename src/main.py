@@ -134,7 +134,8 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
         sys.exit("Model Not Available")
 
     # Initialized Optimizer before load_state_dict
-
+    # Bug Fix - Checkpointing loading for gpu
+    model.to(DEVICE)
     optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=SGD_MOMENTUM)
     if MODEL_PATH != None:
         checkpoint = torch.load(MODEL_PATH)
@@ -144,7 +145,7 @@ def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):
 
     logger.info(model)
     early_stopping_counter=0
-    model.to(DEVICE)
+    
     criterion = nn.CrossEntropyLoss()
     criterion.to(DEVICE)
     train_loss_history=[]
