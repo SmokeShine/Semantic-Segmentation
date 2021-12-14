@@ -77,7 +77,7 @@ class SequenceWithLabelDataset(Dataset):
         # 3 channel image with one hot encoding for 32 categories
         one_hot_labels = self.convert_tensor(one_hot_labels)
         
-        return (image_raw, one_hot_labels)
+        return (image_raw, one_hot_labels,temp)
 
 def predict_model(best_model,images_file, labels_file, pixel_classes):
     logger.info("Generating DataLoader For Prediction")
@@ -88,7 +88,7 @@ def predict_model(best_model,images_file, labels_file, pixel_classes):
     # No need to calculate grad as it is forward pass only
     best_model.eval()
     with torch.no_grad():
-        for counter,(input,target) in tqdm(enumerate(pred_loader)):
+        for counter,(input,target,img_name) in tqdm(enumerate(pred_loader)):
             # Model is in GPU
             input=input.to(DEVICE)
             target=target.to(DEVICE)
@@ -100,7 +100,7 @@ def predict_model(best_model,images_file, labels_file, pixel_classes):
             expected_width=output.shape[2]
             expected_height=output.shape[3]
             temp_image=torch.zeros((3,expected_width,expected_height))
-            
+            logging.info(f"Image is {img_name}")
             torch_pixel_classes=torch.from_numpy(pixel_classes)
             for i in range(expected_width):
                 for j in range(expected_height):
@@ -109,7 +109,7 @@ def predict_model(best_model,images_file, labels_file, pixel_classes):
             # https://discuss.pytorch.org/t/convert-float-image-array-to-int-in-pil-via-image-fromarray/82167/4
             temp_image=temp_image.permute(1,2,0).numpy().astype(np.uint8)
             save_image(input,f'./predictions/actual_{counter}.png')
-            transforms.ToPILImage()(temp_image).save(f'./predictions/pred_{counter}.png')
+            transforms.ToPILImage()(temp_image).save(f'./predictions/pred_{counter}_{img_name}.png')
             break
 
 def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):

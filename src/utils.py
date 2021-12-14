@@ -29,7 +29,7 @@ def train(logger,model,device,data_loader,criterion,optimizer,epoch,print_freq=5
     
     model.train()
     losses = AverageMeter()
-    for i,(input,target) in enumerate(data_loader):
+    for i,(input,target,img_name) in enumerate(data_loader):
         input=input.to(device)
         target=target.to(device)
         optimizer.zero_grad()
@@ -51,7 +51,7 @@ def evaluate(logger,model,device,data_loader,criterion,optimizer,print_freq=10):
     losses = AverageMeter()
     model.eval()
     with torch.no_grad():
-        for i,(input,target) in enumerate(data_loader):
+        for i,(input,target,img_name) in enumerate(data_loader):
             input=input.to(device)
             target=target.to(device)
             optimizer.zero_grad()
