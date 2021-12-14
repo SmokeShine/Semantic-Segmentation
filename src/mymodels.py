@@ -34,22 +34,22 @@ class Vanilla_SegNet(nn.Module):
         self.encoder_stage_5_conv3 = nn.Conv2d(512,512,kernel_size=3,padding=1)
 
         ## Batch Normalization - one for each conv in a stage
-        self.encoder_stage_1_batch_normalization1=nn.BatchNorm2d(64)
-        self.encoder_stage_2_batch_normalization1=nn.BatchNorm2d(128)
-        self.encoder_stage_3_batch_normalization1=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization1=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization1=nn.BatchNorm2d(512)
+        self.encoder_stage_1_batch_normalization1=nn.BatchNorm2d(64,momentum=0.5)
+        self.encoder_stage_2_batch_normalization1=nn.BatchNorm2d(128,momentum=0.5)
+        self.encoder_stage_3_batch_normalization1=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
 
-        self.encoder_stage_1_batch_normalization2=nn.BatchNorm2d(64)
-        self.encoder_stage_2_batch_normalization2=nn.BatchNorm2d(128)
-        self.encoder_stage_3_batch_normalization2=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization2=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization2=nn.BatchNorm2d(512)
+        self.encoder_stage_1_batch_normalization2=nn.BatchNorm2d(64,momentum=0.5)
+        self.encoder_stage_2_batch_normalization2=nn.BatchNorm2d(128,momentum=0.5)
+        self.encoder_stage_3_batch_normalization2=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
 
 
-        self.encoder_stage_3_batch_normalization3=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization3=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization3=nn.BatchNorm2d(512)
+        self.encoder_stage_3_batch_normalization3=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
         ## Relu
         self.relu = nn.ReLU()
 
@@ -84,21 +84,21 @@ class Vanilla_SegNet(nn.Module):
         self.decoder_stage_5_conv2 = nn.Conv2d(64,self.num_output_channels,kernel_size=3,padding=1)
 
         ## Batch Normalization - one for each conv in a stage
-        self.decoder_stage_1_batch_normalization1=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization1=nn.BatchNorm2d(512)
-        self.decoder_stage_3_batch_normalization1=nn.BatchNorm2d(256)
-        self.decoder_stage_4_batch_normalization1=nn.BatchNorm2d(128)
-        self.decoder_stage_5_batch_normalization1=nn.BatchNorm2d(64)
+        self.decoder_stage_1_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_3_batch_normalization1=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_4_batch_normalization1=nn.BatchNorm2d(128,momentum=0.5)
+        self.decoder_stage_5_batch_normalization1=nn.BatchNorm2d(64,momentum=0.5)
 
-        self.decoder_stage_1_batch_normalization2=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization2=nn.BatchNorm2d(512)
-        self.decoder_stage_3_batch_normalization2=nn.BatchNorm2d(256)
-        self.decoder_stage_4_batch_normalization2=nn.BatchNorm2d(64)
+        self.decoder_stage_1_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_3_batch_normalization2=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_4_batch_normalization2=nn.BatchNorm2d(64,momentum=0.5)
         # self.decoder_stage_5_batch_normalization2=nn.BatchNorm2d(self.num_output_channels)
 
-        self.decoder_stage_1_batch_normalization3=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization3=nn.BatchNorm2d(256)
-        self.decoder_stage_3_batch_normalization3=nn.BatchNorm2d(128)
+        self.decoder_stage_1_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization3=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_3_batch_normalization3=nn.BatchNorm2d(128,momentum=0.5)
         # self.decoder_stage_4_batch_normalization3
         # self.decoder_stage_5_batch_normalization3
 
@@ -153,7 +153,7 @@ class Vanilla_SegNet(nn.Module):
         encoder_stage_3=self.relu(encoder_stage_3)
 
         # conv3
-        encoder_stage_3=self.encoder_stage_3_conv2(encoder_stage_3)
+        encoder_stage_3=self.encoder_stage_3_conv3(encoder_stage_3)
         encoder_stage_3=self.encoder_stage_3_batch_normalization3(encoder_stage_3)
         encoder_stage_3=self.relu(encoder_stage_3)
         # max pool
@@ -316,22 +316,22 @@ class SegNet(nn.Module):
         self.encoder_stage_5_conv3 = nn.Conv2d(512,512,kernel_size=3,padding=1)
 
         ## Batch Normalization - one for each conv in a stage
-        self.encoder_stage_1_batch_normalization1=nn.BatchNorm2d(64)
-        self.encoder_stage_2_batch_normalization1=nn.BatchNorm2d(128)
-        self.encoder_stage_3_batch_normalization1=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization1=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization1=nn.BatchNorm2d(512)
+        self.encoder_stage_1_batch_normalization1=nn.BatchNorm2d(64,momentum=0.5)
+        self.encoder_stage_2_batch_normalization1=nn.BatchNorm2d(128,momentum=0.5)
+        self.encoder_stage_3_batch_normalization1=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
 
-        self.encoder_stage_1_batch_normalization2=nn.BatchNorm2d(64)
-        self.encoder_stage_2_batch_normalization2=nn.BatchNorm2d(128)
-        self.encoder_stage_3_batch_normalization2=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization2=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization2=nn.BatchNorm2d(512)
+        self.encoder_stage_1_batch_normalization2=nn.BatchNorm2d(64,momentum=0.5)
+        self.encoder_stage_2_batch_normalization2=nn.BatchNorm2d(128,momentum=0.5)
+        self.encoder_stage_3_batch_normalization2=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
 
 
-        self.encoder_stage_3_batch_normalization3=nn.BatchNorm2d(256)
-        self.encoder_stage_4_batch_normalization3=nn.BatchNorm2d(512)
-        self.encoder_stage_5_batch_normalization3=nn.BatchNorm2d(512)
+        self.encoder_stage_3_batch_normalization3=nn.BatchNorm2d(256,momentum=0.5)
+        self.encoder_stage_4_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
+        self.encoder_stage_5_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
         ## Relu
         self.relu = nn.ReLU()
 
@@ -366,21 +366,21 @@ class SegNet(nn.Module):
         self.decoder_stage_5_conv2 = nn.Conv2d(64,self.num_output_channels,kernel_size=3,padding=1)
 
         ## Batch Normalization - one for each conv in a stage
-        self.decoder_stage_1_batch_normalization1=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization1=nn.BatchNorm2d(512)
-        self.decoder_stage_3_batch_normalization1=nn.BatchNorm2d(256)
-        self.decoder_stage_4_batch_normalization1=nn.BatchNorm2d(128)
-        self.decoder_stage_5_batch_normalization1=nn.BatchNorm2d(64)
+        self.decoder_stage_1_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization1=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_3_batch_normalization1=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_4_batch_normalization1=nn.BatchNorm2d(128,momentum=0.5)
+        self.decoder_stage_5_batch_normalization1=nn.BatchNorm2d(64,momentum=0.5)
 
-        self.decoder_stage_1_batch_normalization2=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization2=nn.BatchNorm2d(512)
-        self.decoder_stage_3_batch_normalization2=nn.BatchNorm2d(256)
-        self.decoder_stage_4_batch_normalization2=nn.BatchNorm2d(64)
+        self.decoder_stage_1_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization2=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_3_batch_normalization2=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_4_batch_normalization2=nn.BatchNorm2d(64,momentum=0.5)
         # self.decoder_stage_5_batch_normalization2=nn.BatchNorm2d(self.num_output_channels)
 
-        self.decoder_stage_1_batch_normalization3=nn.BatchNorm2d(512)
-        self.decoder_stage_2_batch_normalization3=nn.BatchNorm2d(256)
-        self.decoder_stage_3_batch_normalization3=nn.BatchNorm2d(128)
+        self.decoder_stage_1_batch_normalization3=nn.BatchNorm2d(512,momentum=0.5)
+        self.decoder_stage_2_batch_normalization3=nn.BatchNorm2d(256,momentum=0.5)
+        self.decoder_stage_3_batch_normalization3=nn.BatchNorm2d(128,momentum=0.5)
         # self.decoder_stage_4_batch_normalization3
         # self.decoder_stage_5_batch_normalization3
 
@@ -521,7 +521,7 @@ class SegNet(nn.Module):
         encoder_stage_3=self.relu(encoder_stage_3)
 
         # conv3
-        encoder_stage_3=self.encoder_stage_3_conv2(encoder_stage_3)
+        encoder_stage_3=self.encoder_stage_3_conv3(encoder_stage_3)
         encoder_stage_3=self.encoder_stage_3_batch_normalization3(encoder_stage_3)
         encoder_stage_3=self.relu(encoder_stage_3)
         # max pool

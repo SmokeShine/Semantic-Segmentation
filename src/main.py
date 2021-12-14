@@ -100,12 +100,16 @@ def predict_model(best_model,images_file, labels_file, pixel_classes):
             expected_width=output.shape[2]
             expected_height=output.shape[3]
             temp_image=torch.zeros((3,expected_width,expected_height))
-            squeezed_output=output[0]
+            
             torch_pixel_classes=torch.from_numpy(pixel_classes)
             for i in range(expected_width):
                 for j in range(expected_height):
-                    temp_image[:,i,j]=torch_pixel_classes[torch.argmax(squeezed_output[:,i,j])]
-            save_image(temp_image,f'./predictions/pred_{counter}.png')
+                    temp_image[:,i,j]=torch_pixel_classes[torch.argmax(output[0,:,i,j])]
+            # import pdb;pdb.set_trace()
+            # https://discuss.pytorch.org/t/convert-float-image-array-to-int-in-pil-via-image-fromarray/82167/4
+            temp_image=temp_image.permute(1,2,0).numpy().astype(np.uint8)
+            save_image(input,f'./predictions/actual_{counter}.png')
+            transforms.ToPILImage()(temp_image).save(f'./predictions/pred_{counter}.png')
             break
 
 def train_model(images_file, labels_file, pixel_classes, model_name = 'SegNet'):

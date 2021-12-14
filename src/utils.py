@@ -65,6 +65,7 @@ def evaluate(logger,model,device,data_loader,criterion,optimizer,print_freq=10):
 def save_checkpoint(logger, model, optimizer, path):
     state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict()}
     torch.save(state, path)
+    torch.save(model,'./checkpoint_model.pth',_use_new_zipfile_serialization=False)
     logger.info(f"checkpoint saved at {path}")
         
 # From Abhinav's commit
