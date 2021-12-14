@@ -230,6 +230,9 @@ def parse_args():
                         help="Transforms to be applied to input dataset. \
                         options (posterize,sharpness,contrast,equalize,crop,hflip). \
                         comma-separated list of transforms.")
+    parser.add_argument("--pred_model", default="./checkpoint_model.pth" , 
+                        help="Model for prediction; Default is checkpoint_model.pth; \
+                            change to ./best_model.pth for 1 sample best model")
     return parser.parse_args()
 
 
@@ -240,7 +243,8 @@ if __name__ == '__main__':
         NUM_EPOCHS, NUM_WORKERS,\
         LEARNING_RATE, SGD_MOMENTUM,\
         DEVICE,SPLIT_PERCENTAGE,\
-        TRANSFORM,PATIENCE
+        TRANSFORM,PATIENCE,\
+        PRED_MODEL
     __train__ = args.train
     BATCH_SIZE = args.batch_size
     USE_CUDA = args.gpu
@@ -254,6 +258,7 @@ if __name__ == '__main__':
     MODEL_PATH = args.model_path
     SPLIT_PERCENTAGE=args.split_percentage
     PATIENCE=args.patience
+    PRED_MODEL=args.pred_model
     TRANSFORM = transforms.Compose(get_color_transforms(logger, str(args.transforms)))
     DEVICE = torch.device(
         "cuda" if USE_CUDA and torch.cuda.is_available() else "cpu")
@@ -270,7 +275,8 @@ if __name__ == '__main__':
         logger.info("Training Segnet")
         train_model(images_file, labels_file, pixel_classes)
     else:
-        best_model=torch.load("./best_model.pth")
+        best_model=torch.load(PRED_MODEL)
+        logger.info(f"Using {PRED_MODEL} for prediction")
         # Predict on New Images
         predict_model(best_model,images_file, labels_file, pixel_classes)
         logger.info("Prediction Step Complete")
