@@ -1,0 +1,261 @@
+2021-12-14 17:32:47,030 root         INFO     Namespace(gpu=True, train=True, batch_size=8, num_workers=5, num_epochs=20, num_output_classes=32, learning_rate=0.01, sgd_momentum=0.5, plot_output_path='./Plots_', model_path=None, epoch_save_checkpoint=5, split_percentage=0.01, patience=50, transforms='posterize', pred_model='./checkpoint_model.pth')
+2021-12-14 17:32:47,030 root         INFO     color transforms added - posterize,
+2021-12-14 17:32:47,060 root         INFO     Settings for Cuda
+2021-12-14 17:32:47,061 root         INFO     Training Segnet
+2021-12-14 17:32:47,061 root         INFO     Generating DataLoader
+2021-12-14 17:32:47,062 root         INFO     Training 1st Model
+2021-12-14 17:32:49,953 root         INFO     SegNet(
+  (torch_vgg16): VGG(
+    (features): Sequential(
+      (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): ReLU(inplace=True)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): ReLU(inplace=True)
+      (4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (5): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (6): ReLU(inplace=True)
+      (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (8): ReLU(inplace=True)
+      (9): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (10): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (11): ReLU(inplace=True)
+      (12): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (13): ReLU(inplace=True)
+      (14): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (15): ReLU(inplace=True)
+      (16): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (17): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (18): ReLU(inplace=True)
+      (19): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (20): ReLU(inplace=True)
+      (21): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (22): ReLU(inplace=True)
+      (23): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (24): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (25): ReLU(inplace=True)
+      (26): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (27): ReLU(inplace=True)
+      (28): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (29): ReLU(inplace=True)
+      (30): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    )
+    (avgpool): AdaptiveAvgPool2d(output_size=(7, 7))
+    (classifier): Sequential(
+      (0): Linear(in_features=25088, out_features=4096, bias=True)
+      (1): ReLU(inplace=True)
+      (2): Dropout(p=0.5, inplace=False)
+      (3): Linear(in_features=4096, out_features=4096, bias=True)
+      (4): ReLU(inplace=True)
+      (5): Dropout(p=0.5, inplace=False)
+      (6): Linear(in_features=4096, out_features=1000, bias=True)
+    )
+  )
+  (encoder_stage_1_conv1): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_1_conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_2_conv1): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_2_conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_3_conv1): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_3_conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_3_conv3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_4_conv1): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_4_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_4_conv3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_5_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_5_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_5_conv3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (encoder_stage_1_batch_normalization1): BatchNorm2d(64, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_2_batch_normalization1): BatchNorm2d(128, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_3_batch_normalization1): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_4_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_5_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_1_batch_normalization2): BatchNorm2d(64, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_2_batch_normalization2): BatchNorm2d(128, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_3_batch_normalization2): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_4_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_5_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_3_batch_normalization3): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_4_batch_normalization3): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (encoder_stage_5_batch_normalization3): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (relu): ReLU()
+  (encoder_max_pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (decoder_unpool): MaxUnpool2d(kernel_size=(2, 2), stride=(2, 2), padding=(0, 0))
+  (decoder_stage_1_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_conv3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_2_conv3): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv1): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_3_conv3): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_4_conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_4_conv2): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_5_conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_5_conv2): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (decoder_stage_1_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization1): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization1): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_4_batch_normalization1): BatchNorm2d(128, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_5_batch_normalization1): BatchNorm2d(64, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_1_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization2): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization2): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_4_batch_normalization2): BatchNorm2d(64, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_1_batch_normalization3): BatchNorm2d(512, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_2_batch_normalization3): BatchNorm2d(256, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+  (decoder_stage_3_batch_normalization3): BatchNorm2d(128, eps=1e-05, momentum=0.5, affine=True, track_running_stats=True)
+)
+2021-12-14 17:32:49,954 root         INFO     Epoch 1
+2021-12-14 17:32:53,593 root         INFO     Epoch: 1 	 iteration: 0 	 Training Loss Current:3.5234 Average:(3.5234)
+2021-12-14 17:33:40,222 root         INFO     Epoch: 1 	 iteration: 50 	 Training Loss Current:1.7636 Average:(2.2262)
+2021-12-14 17:34:13,321 root         INFO     Average Loss for epoch 1 is 1.9713581099633868
+2021-12-14 17:34:15,029 root         INFO     Validation Loss Current:1.4402 Average:(1.4402)
+2021-12-14 17:34:15,111 root         INFO     Current Epoch loss is better : True 	 Old Loss: inf  vs New loss:1.4402011632919312
+2021-12-14 17:34:15,112 root         INFO     New Best Identified: 	 Old Loss: inf  vs New loss:	1.4402011632919312 
+2021-12-14 17:34:24,010 root         INFO     Epoch 2
+2021-12-14 17:34:27,234 root         INFO     Epoch: 2 	 iteration: 0 	 Training Loss Current:1.6334 Average:(1.6334)
+2021-12-14 17:35:12,702 root         INFO     Epoch: 2 	 iteration: 50 	 Training Loss Current:1.4346 Average:(1.4278)
+2021-12-14 17:35:45,170 root         INFO     Average Loss for epoch 2 is 1.3663883642092218
+2021-12-14 17:35:46,897 root         INFO     Validation Loss Current:1.3070 Average:(1.3070)
+2021-12-14 17:35:46,972 root         INFO     Current Epoch loss is better : True 	 Old Loss: 1.4402011632919312  vs New loss:1.3070330619812012
+2021-12-14 17:35:46,972 root         INFO     New Best Identified: 	 Old Loss: 1.4402011632919312  vs New loss:	1.3070330619812012 
+2021-12-14 17:35:55,984 root         INFO     Epoch 3
+2021-12-14 17:35:59,182 root         INFO     Epoch: 3 	 iteration: 0 	 Training Loss Current:1.3837 Average:(1.3837)
+2021-12-14 17:36:44,774 root         INFO     Epoch: 3 	 iteration: 50 	 Training Loss Current:1.1595 Average:(1.2060)
+2021-12-14 17:37:17,251 root         INFO     Average Loss for epoch 3 is 1.1713802192671499
+2021-12-14 17:37:18,962 root         INFO     Validation Loss Current:1.2557 Average:(1.2557)
+2021-12-14 17:37:19,037 root         INFO     Current Epoch loss is better : True 	 Old Loss: 1.3070330619812012  vs New loss:1.2556817531585693
+2021-12-14 17:37:19,037 root         INFO     New Best Identified: 	 Old Loss: 1.3070330619812012  vs New loss:	1.2556817531585693 
+2021-12-14 17:37:28,370 root         INFO     Epoch 4
+2021-12-14 17:37:31,577 root         INFO     Epoch: 4 	 iteration: 0 	 Training Loss Current:1.0469 Average:(1.0469)
+2021-12-14 17:38:17,163 root         INFO     Epoch: 4 	 iteration: 50 	 Training Loss Current:1.1094 Average:(1.0620)
+2021-12-14 17:38:49,673 root         INFO     Average Loss for epoch 4 is 1.067332009760722
+2021-12-14 17:38:51,379 root         INFO     Validation Loss Current:0.9548 Average:(0.9548)
+2021-12-14 17:38:51,455 root         INFO     Current Epoch loss is better : True 	 Old Loss: 1.2556817531585693  vs New loss:0.9548109173774719
+2021-12-14 17:38:51,455 root         INFO     New Best Identified: 	 Old Loss: 1.2556817531585693  vs New loss:	0.9548109173774719 
+2021-12-14 17:39:00,320 root         INFO     Epoch 5
+2021-12-14 17:39:03,505 root         INFO     Epoch: 5 	 iteration: 0 	 Training Loss Current:0.9248 Average:(0.9248)
+2021-12-14 17:39:49,165 root         INFO     Epoch: 5 	 iteration: 50 	 Training Loss Current:1.0222 Average:(1.0012)
+2021-12-14 17:40:21,668 root         INFO     Average Loss for epoch 5 is 0.9971114338646705
+2021-12-14 17:40:23,378 root         INFO     Validation Loss Current:0.8821 Average:(0.8821)
+2021-12-14 17:40:23,446 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.9548109173774719  vs New loss:0.8820903897285461
+2021-12-14 17:40:23,446 root         INFO     Saving Checkpoint for SegNet at epoch 5
+2021-12-14 17:40:42,648 root         INFO     checkpoint saved at SegNet.pth_5.tar
+2021-12-14 17:40:42,648 root         INFO     New Best Identified: 	 Old Loss: 0.9548109173774719  vs New loss:	0.8820903897285461 
+2021-12-14 17:40:51,388 root         INFO     Epoch 6
+2021-12-14 17:40:54,584 root         INFO     Epoch: 6 	 iteration: 0 	 Training Loss Current:0.8608 Average:(0.8608)
+2021-12-14 17:41:40,139 root         INFO     Epoch: 6 	 iteration: 50 	 Training Loss Current:0.8975 Average:(0.9693)
+2021-12-14 17:42:12,586 root         INFO     Average Loss for epoch 6 is 0.9463386391356631
+2021-12-14 17:42:14,296 root         INFO     Validation Loss Current:0.8177 Average:(0.8177)
+2021-12-14 17:42:14,364 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.8820903897285461  vs New loss:0.8177025318145752
+2021-12-14 17:42:14,365 root         INFO     New Best Identified: 	 Old Loss: 0.8820903897285461  vs New loss:	0.8177025318145752 
+2021-12-14 17:42:23,580 root         INFO     Epoch 7
+2021-12-14 17:42:26,781 root         INFO     Epoch: 7 	 iteration: 0 	 Training Loss Current:0.8567 Average:(0.8567)
+2021-12-14 17:43:12,415 root         INFO     Epoch: 7 	 iteration: 50 	 Training Loss Current:0.9778 Average:(0.9011)
+2021-12-14 17:43:44,929 root         INFO     Average Loss for epoch 7 is 0.8942063394128761
+2021-12-14 17:43:46,637 root         INFO     Validation Loss Current:0.8043 Average:(0.8043)
+2021-12-14 17:43:46,707 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.8177025318145752  vs New loss:0.8042708039283752
+2021-12-14 17:43:46,707 root         INFO     New Best Identified: 	 Old Loss: 0.8177025318145752  vs New loss:	0.8042708039283752 
+2021-12-14 17:43:55,330 root         INFO     Epoch 8
+2021-12-14 17:43:58,481 root         INFO     Epoch: 8 	 iteration: 0 	 Training Loss Current:0.8398 Average:(0.8398)
+2021-12-14 17:44:44,178 root         INFO     Epoch: 8 	 iteration: 50 	 Training Loss Current:0.9575 Average:(0.8542)
+2021-12-14 17:45:16,697 root         INFO     Average Loss for epoch 8 is 0.8479707909248748
+2021-12-14 17:45:18,421 root         INFO     Validation Loss Current:0.7406 Average:(0.7406)
+2021-12-14 17:45:18,508 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.8042708039283752  vs New loss:0.7405772805213928
+2021-12-14 17:45:18,509 root         INFO     New Best Identified: 	 Old Loss: 0.8042708039283752  vs New loss:	0.7405772805213928 
+2021-12-14 17:45:27,432 root         INFO     Epoch 9
+2021-12-14 17:45:30,704 root         INFO     Epoch: 9 	 iteration: 0 	 Training Loss Current:0.7588 Average:(0.7588)
+2021-12-14 17:46:16,414 root         INFO     Epoch: 9 	 iteration: 50 	 Training Loss Current:0.7725 Average:(0.8180)
+2021-12-14 17:46:48,925 root         INFO     Average Loss for epoch 9 is 0.8137347535028925
+2021-12-14 17:46:50,653 root         INFO     Validation Loss Current:0.7320 Average:(0.7320)
+2021-12-14 17:46:50,732 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.7405772805213928  vs New loss:0.7320296764373779
+2021-12-14 17:46:50,732 root         INFO     New Best Identified: 	 Old Loss: 0.7405772805213928  vs New loss:	0.7320296764373779 
+2021-12-14 17:46:59,612 root         INFO     Epoch 10
+2021-12-14 17:47:02,750 root         INFO     Epoch: 10 	 iteration: 0 	 Training Loss Current:0.7816 Average:(0.7816)
+2021-12-14 17:47:48,444 root         INFO     Epoch: 10 	 iteration: 50 	 Training Loss Current:0.7705 Average:(0.7612)
+2021-12-14 17:48:20,959 root         INFO     Average Loss for epoch 10 is 0.7815734969092377
+2021-12-14 17:48:22,665 root         INFO     Validation Loss Current:0.7275 Average:(0.7275)
+2021-12-14 17:48:22,738 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.7320296764373779  vs New loss:0.7275161743164062
+2021-12-14 17:48:22,738 root         INFO     Saving Checkpoint for SegNet at epoch 10
+2021-12-14 17:48:42,971 root         INFO     checkpoint saved at SegNet.pth_10.tar
+2021-12-14 17:48:42,971 root         INFO     New Best Identified: 	 Old Loss: 0.7320296764373779  vs New loss:	0.7275161743164062 
+2021-12-14 17:48:51,632 root         INFO     Epoch 11
+2021-12-14 17:48:54,887 root         INFO     Epoch: 11 	 iteration: 0 	 Training Loss Current:0.7229 Average:(0.7229)
+2021-12-14 17:49:40,374 root         INFO     Epoch: 11 	 iteration: 50 	 Training Loss Current:0.6678 Average:(0.7497)
+2021-12-14 17:50:12,858 root         INFO     Average Loss for epoch 11 is 0.7503364297429835
+2021-12-14 17:50:14,584 root         INFO     Validation Loss Current:0.6693 Average:(0.6693)
+2021-12-14 17:50:14,659 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.7275161743164062  vs New loss:0.6693352460861206
+2021-12-14 17:50:14,659 root         INFO     New Best Identified: 	 Old Loss: 0.7275161743164062  vs New loss:	0.6693352460861206 
+2021-12-14 17:50:22,929 root         INFO     Epoch 12
+2021-12-14 17:50:26,139 root         INFO     Epoch: 12 	 iteration: 0 	 Training Loss Current:0.7200 Average:(0.7200)
+2021-12-14 17:51:11,777 root         INFO     Epoch: 12 	 iteration: 50 	 Training Loss Current:0.6114 Average:(0.7156)
+2021-12-14 17:51:44,272 root         INFO     Average Loss for epoch 12 is 0.7225821155636043
+2021-12-14 17:51:45,983 root         INFO     Validation Loss Current:0.7036 Average:(0.7036)
+2021-12-14 17:51:46,063 root         INFO     Current Epoch loss is better : False 	 Old Loss: 0.6693352460861206  vs New loss:0.7036056518554688
+2021-12-14 17:51:46,063 root         INFO     Loss didnot improve
+2021-12-14 17:51:46,063 root         INFO     Epoch 13
+2021-12-14 17:51:49,240 root         INFO     Epoch: 13 	 iteration: 0 	 Training Loss Current:0.6715 Average:(0.6715)
+2021-12-14 17:52:35,036 root         INFO     Epoch: 13 	 iteration: 50 	 Training Loss Current:0.6243 Average:(0.7049)
+2021-12-14 17:53:07,592 root         INFO     Average Loss for epoch 13 is 0.705381926438994
+2021-12-14 17:53:09,310 root         INFO     Validation Loss Current:0.6676 Average:(0.6676)
+2021-12-14 17:53:09,387 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.6693352460861206  vs New loss:0.6675803065299988
+2021-12-14 17:53:09,387 root         INFO     New Best Identified: 	 Old Loss: 0.6693352460861206  vs New loss:	0.6675803065299988 
+2021-12-14 17:53:18,189 root         INFO     Epoch 14
+2021-12-14 17:53:21,388 root         INFO     Epoch: 14 	 iteration: 0 	 Training Loss Current:0.6843 Average:(0.6843)
+2021-12-14 17:54:07,081 root         INFO     Epoch: 14 	 iteration: 50 	 Training Loss Current:0.6358 Average:(0.6690)
+2021-12-14 17:54:39,620 root         INFO     Average Loss for epoch 14 is 0.6744983189387692
+2021-12-14 17:54:41,341 root         INFO     Validation Loss Current:0.6479 Average:(0.6479)
+2021-12-14 17:54:41,431 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.6675803065299988  vs New loss:0.6479417681694031
+2021-12-14 17:54:41,431 root         INFO     New Best Identified: 	 Old Loss: 0.6675803065299988  vs New loss:	0.6479417681694031 
+2021-12-14 17:54:50,375 root         INFO     Epoch 15
+2021-12-14 17:54:53,552 root         INFO     Epoch: 15 	 iteration: 0 	 Training Loss Current:0.7131 Average:(0.7131)
+2021-12-14 17:55:39,253 root         INFO     Epoch: 15 	 iteration: 50 	 Training Loss Current:0.6093 Average:(0.6785)
+2021-12-14 17:56:11,777 root         INFO     Average Loss for epoch 15 is 0.6682051743141856
+2021-12-14 17:56:13,498 root         INFO     Validation Loss Current:0.5801 Average:(0.5801)
+2021-12-14 17:56:13,579 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.6479417681694031  vs New loss:0.5800647735595703
+2021-12-14 17:56:13,579 root         INFO     Saving Checkpoint for SegNet at epoch 15
+2021-12-14 17:56:33,237 root         INFO     checkpoint saved at SegNet.pth_15.tar
+2021-12-14 17:56:33,238 root         INFO     New Best Identified: 	 Old Loss: 0.6479417681694031  vs New loss:	0.5800647735595703 
+2021-12-14 17:56:42,109 root         INFO     Epoch 16
+2021-12-14 17:56:45,381 root         INFO     Epoch: 16 	 iteration: 0 	 Training Loss Current:0.7285 Average:(0.7285)
+2021-12-14 17:57:30,900 root         INFO     Epoch: 16 	 iteration: 50 	 Training Loss Current:0.6049 Average:(0.6365)
+2021-12-14 17:58:03,413 root         INFO     Average Loss for epoch 16 is 0.6298458045429043
+2021-12-14 17:58:05,140 root         INFO     Validation Loss Current:0.6152 Average:(0.6152)
+2021-12-14 17:58:05,220 root         INFO     Current Epoch loss is better : False 	 Old Loss: 0.5800647735595703  vs New loss:0.6151807904243469
+2021-12-14 17:58:05,220 root         INFO     Loss didnot improve
+2021-12-14 17:58:05,220 root         INFO     Epoch 17
+2021-12-14 17:58:08,337 root         INFO     Epoch: 17 	 iteration: 0 	 Training Loss Current:0.5598 Average:(0.5598)
+2021-12-14 17:58:54,127 root         INFO     Epoch: 17 	 iteration: 50 	 Training Loss Current:0.5158 Average:(0.6119)
+2021-12-14 17:59:26,645 root         INFO     Average Loss for epoch 17 is 0.6146313934573523
+2021-12-14 17:59:28,352 root         INFO     Validation Loss Current:0.5781 Average:(0.5781)
+2021-12-14 17:59:28,415 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.5800647735595703  vs New loss:0.5780839920043945
+2021-12-14 17:59:28,415 root         INFO     New Best Identified: 	 Old Loss: 0.5800647735595703  vs New loss:	0.5780839920043945 
+2021-12-14 17:59:37,891 root         INFO     Epoch 18
+2021-12-14 17:59:41,132 root         INFO     Epoch: 18 	 iteration: 0 	 Training Loss Current:0.6488 Average:(0.6488)
+2021-12-14 18:00:26,763 root         INFO     Epoch: 18 	 iteration: 50 	 Training Loss Current:0.6302 Average:(0.5925)
+2021-12-14 18:00:59,312 root         INFO     Average Loss for epoch 18 is 0.6016893775043982
+2021-12-14 18:01:01,035 root         INFO     Validation Loss Current:0.5143 Average:(0.5143)
+2021-12-14 18:01:01,119 root         INFO     Current Epoch loss is better : True 	 Old Loss: 0.5780839920043945  vs New loss:0.5142941474914551
+2021-12-14 18:01:01,120 root         INFO     New Best Identified: 	 Old Loss: 0.5780839920043945  vs New loss:	0.5142941474914551 
+2021-12-14 18:01:09,877 root         INFO     Epoch 19
+2021-12-14 18:01:13,061 root         INFO     Epoch: 19 	 iteration: 0 	 Training Loss Current:0.5252 Average:(0.5252)
+2021-12-14 18:01:58,806 root         INFO     Epoch: 19 	 iteration: 50 	 Training Loss Current:0.6491 Average:(0.5922)
+2021-12-14 18:02:31,360 root         INFO     Average Loss for epoch 19 is 0.5857752049690709
+2021-12-14 18:02:33,085 root         INFO     Validation Loss Current:0.5264 Average:(0.5264)
+2021-12-14 18:02:33,150 root         INFO     Current Epoch loss is better : False 	 Old Loss: 0.5142941474914551  vs New loss:0.5264162421226501
+2021-12-14 18:02:33,150 root         INFO     Loss didnot improve
+2021-12-14 18:02:33,150 root         INFO     Epoch 20
+2021-12-14 18:02:36,420 root         INFO     Epoch: 20 	 iteration: 0 	 Training Loss Current:0.5606 Average:(0.5606)
+2021-12-14 18:03:22,166 root         INFO     Epoch: 20 	 iteration: 50 	 Training Loss Current:0.5696 Average:(0.5631)
+2021-12-14 18:03:54,730 root         INFO     Average Loss for epoch 20 is 0.5665220977250025
+2021-12-14 18:03:56,441 root         INFO     Validation Loss Current:0.5351 Average:(0.5351)
+2021-12-14 18:03:56,503 root         INFO     Current Epoch loss is better : False 	 Old Loss: 0.5142941474914551  vs New loss:0.5350655913352966
+2021-12-14 18:03:56,503 root         INFO     Saving Checkpoint for SegNet at epoch 20
+2021-12-14 18:04:15,657 root         INFO     checkpoint saved at SegNet.pth_20.tar
+2021-12-14 18:04:15,658 root         INFO     Loss didnot improve
+2021-12-14 18:04:35,214 root         INFO     checkpoint saved at SegNet.pth.tar
+2021-12-14 18:04:35,662 root         INFO     Plotting Charts
+2021-12-14 18:04:35,663 root         INFO     Train Losses:[1.9713581099633868, 1.3663883642092218, 1.1713802192671499, 1.067332009760722, 0.9971114338646705, 0.9463386391356631, 0.8942063394128761, 0.8479707909248748, 0.8137347535028925, 0.7815734969092377, 0.7503364297429835, 0.7225821155636043, 0.705381926438994, 0.6744983189387692, 0.6682051743141856, 0.6298458045429043, 0.6146313934573523, 0.6016893775043982, 0.5857752049690709, 0.5665220977250025]
+2021-12-14 18:04:35,663 root         INFO     Validation Losses:[1.4402011632919312, 1.3070330619812012, 1.2556817531585693, 0.9548109173774719, 0.8820903897285461, 0.8177025318145752, 0.8042708039283752, 0.7405772805213928, 0.7320296764373779, 0.7275161743164062, 0.6693352460861206, 0.7036056518554688, 0.6675803065299988, 0.6479417681694031, 0.5800647735595703, 0.6151807904243469, 0.5780839920043945, 0.5142941474914551, 0.5264162421226501, 0.5350655913352966]
+2021-12-14 18:04:35,824 root         INFO     loss curve saved at ./Plots_loss_curves.jpg.
+2021-12-14 18:04:35,824 root         INFO     Training Finished for SegNet
