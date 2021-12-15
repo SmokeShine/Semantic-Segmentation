@@ -124,7 +124,6 @@ class PascalVOCLoader(data.Dataset):
       return torch.from_numpy(segLabel).long()
 
     def oneHotEncoding(self, segLabel):
-      return transform.ToTensor()(segLabel)
       one_hot_labels = np.zeros((self.classes, segLabel.size[1], segLabel.size[0]))
       segLabelnp=np.array(segLabel)
       
